@@ -1,30 +1,27 @@
-with open('./inputs/binary.txt', "r") as ip:
-    report = ip.readlines()
+with open('./inputs/binary.txt', 'r') as f:
+    lines = f.readlines()
+    result = [entry.strip() for entry in lines]
 
-bSize = len(report[0])
-bPos = {}
-for i in range(0, bSize - 1):
-    bPos[i + 1] = [0, 0]
+from copy import copy
 
-for val in report:
-    for i in range(0, len(val)):
-        if not val[i].isdigit(): continue
-        if int(val[i]) == 0:
-            bPos[i + 1][0] += 1
-        elif int(val[i]) == 1:
-            bPos[i + 1][1] += 1
+oxy = copy(result)
+co2 = copy(result)
 
-oxr = report
+for i in range(len(result[0])):
+    if len(oxy) == 1:
+        break
+    all_entries_at_pos = [entry[i] for entry in oxy]
+    common_bit = '1' if all_entries_at_pos.count('1') >= len(oxy) / 2 else '0'
+    oxy = [entry for entry in oxy if entry[i] == common_bit]
+oxygen_rating = int(oxy[0], 2)
+print(oxy[0], oxygen_rating)
 
-for i in range(0, len(bPos)):
+for i in range(len(result[0])):
+    if len(co2) == 1:
+        break
+    all_entries_at_pos = [entry[i] for entry in co2]
+    least_common_bit = '0' if all_entries_at_pos.count('1') >= len(co2) / 2 else '1'
+    co2 = [entry for entry in co2 if entry[i] == least_common_bit]
+co2_rating = int(co2[0], 2)
 
-    if bPos[i + 1][0] > bPos[i + 1][1]:
-        mVal = "0"
-    else:
-        mVal = "1"
-
-    for val in oxr:
-        if not val[i] == mVal:
-            oxr.remove(val)
-
-print(oxr)
+print(oxygen_rating * co2_rating)
